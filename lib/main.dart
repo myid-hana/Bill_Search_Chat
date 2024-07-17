@@ -20,12 +20,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.deepPurple,
         ),
-        textTheme: TextTheme(
-          titleLarge: GoogleFonts.montserrat(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        textTheme: GoogleFonts.notoSansKrTextTheme(),
       ),
       home: const ChatPage(),
     );
