@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
         ),
         textTheme: GoogleFonts.notoSansKrTextTheme(),
       ),
+      debugShowCheckedModeBanner: false,
       home: const ChatPage(),
     );
   }
