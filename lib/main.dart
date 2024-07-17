@@ -1,5 +1,6 @@
 import 'package:bill_search_chat/page/chat.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(
@@ -15,8 +16,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Bill Search Chat',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+        ),
+        textTheme: TextTheme(
+          titleLarge: GoogleFonts.montserrat(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       home: const ChatPage(),
     );
