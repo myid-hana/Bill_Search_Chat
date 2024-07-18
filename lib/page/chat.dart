@@ -13,14 +13,15 @@ class ChatPage extends StatelessWidget {
           style: Theme.of(context).textTheme.titleLarge,
         ),
       ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'chat main page',
-            ),
-          ],
+      body: Center(
+        child: Container(
+          margin: const EdgeInsets.all(30),
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(20),
+          ),
         ),
       ),
     );
