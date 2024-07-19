@@ -28,6 +28,13 @@ class _ChatPageState extends State<ChatPage>
     });
   }
 
+  void _onEditingComplete() {
+    if (_controller.text.isNotEmpty) {
+      _makeChatWidget(_controller.text);
+      _controller.clear();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,22 +58,12 @@ class _ChatPageState extends State<ChatPage>
                     controller: _controller,
                     decoration: const InputDecoration(
                         labelText: 'Enter a search keyword'),
-                    onEditingComplete: () {
-                      if (_controller.text.isNotEmpty) {
-                        _makeChatWidget(_controller.text);
-                      }
-                      _controller.clear();
-                    },
+                    onEditingComplete: () => _onEditingComplete(),
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.send),
-                  onPressed: () {
-                    if (_controller.text.isNotEmpty) {
-                      _makeChatWidget(_controller.text);
-                    }
-                    _controller.clear();
-                  },
+                  onPressed: () => _onEditingComplete(),
                 ),
               ],
             ),
@@ -96,7 +93,7 @@ class _BounceWidgetState extends State<BounceWidget>
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
-    );
+    )..repeat();
     _animation = Tween<double>(begin: 0, end: 20)
         .chain(CurveTween(curve: Curves.bounceOut))
         .animate(_animationController);
