@@ -38,7 +38,7 @@ class _ChatPageState extends State<ChatPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Chat Screen')),
+      appBar: AppBar(title: const Text('Bill Search Chat')),
       body: Column(
         children: [
           Expanded(
@@ -93,7 +93,7 @@ class _BounceWidgetState extends State<BounceWidget>
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
-    )..repeat();
+    );
     _animation = Tween<double>(begin: 0, end: 20)
         .chain(CurveTween(curve: Curves.bounceOut))
         .animate(_animationController);
