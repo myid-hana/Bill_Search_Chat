@@ -1,3 +1,4 @@
+import 'package:bill_search_chat/components/animation/typing_indicator.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
@@ -11,25 +12,30 @@ class _ChatPageState extends State<ChatPage>
     with SingleTickerProviderStateMixin {
   final List<Widget> chatWidgetList = [];
   final TextEditingController _controller = TextEditingController();
+  bool isAnswering = false;
 
   void _makeChatWidget(String submitValue) {
+    isAnswering = true;
     setState(() {
       chatWidgetList.add(
         BounceWidget(child: sendChatWidget(submitValue)),
       );
+      chatWidgetList.add(const TypingIndicator());
     });
 
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
+        chatWidgetList.removeLast();
         chatWidgetList.add(
           BounceWidget(child: responseChatWidget(submitValue)),
         );
       });
+      isAnswering = false;
     });
   }
 
   void _onEditingComplete() {
-    if (_controller.text.isNotEmpty) {
+    if (_controller.text.isNotEmpty && !isAnswering) {
       _makeChatWidget(_controller.text);
       _controller.clear();
     }
