@@ -1,4 +1,4 @@
-import 'package:bill_search_chat/page/chat.dart';
+import 'package:bill_search_chat/page/chat/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';

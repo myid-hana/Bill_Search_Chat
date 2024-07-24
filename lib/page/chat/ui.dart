@@ -12,6 +12,8 @@ class _ChatPageState extends State<ChatPage>
     with SingleTickerProviderStateMixin {
   final List<Widget> chatWidgetList = [];
   final TextEditingController _controller = TextEditingController();
+
+  // api 응답을 받는 중인지 여부
   bool isAnswering = false;
 
   void _makeChatWidget(String submitValue) {
