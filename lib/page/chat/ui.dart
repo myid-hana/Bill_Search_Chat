@@ -1,4 +1,5 @@
 import 'package:bill_search_chat/components/animation/typing_indicator.dart';
+import 'package:bill_search_chat/components/chat/bounce_speech_bubble.dart';
 import 'package:bill_search_chat/page/chat/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,42 +13,49 @@ class ChatPage extends ConsumerStatefulWidget {
 
 class _ChatPageState extends ConsumerState<ChatPage>
     with SingleTickerProviderStateMixin {
-  final List<Widget> chatWidgetList = [];
   final TextEditingController _controller = TextEditingController();
 
-  void _makeChatWidget(String submitValue) {
-    ref.read(isAnsweringProvider.notifier).state = true;
-    setState(() {
-      chatWidgetList.add(
-        BounceWidget(child: sendChatWidget(submitValue)),
-      );
-      chatWidgetList.add(const TypingIndicator());
-    });
+  void _onEditingComplete() {
+    final isAnswering = ref.read(isAnsweringProvider);
+    final keyword = _controller.text;
 
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        chatWidgetList.removeLast();
-        chatWidgetList.add(
-          BounceWidget(child: responseChatWidget(submitValue)),
-        );
-      });
-      ref.read(isAnsweringProvider.notifier).state = false;
-    });
+    if (keyword.isNotEmpty && !isAnswering) return;
+
+    ref.read(isAnsweringProvider.notifier).state = true;
+    _controller.clear();
+    _addChatWidget(keyword);
+    ref.read(isAnsweringProvider.notifier).state = false;
   }
 
-  void _onEditingComplete() {
-    final bool isAnswering = ref.read(isAnsweringProvider);
+  void _addChatWidget(String keyword) {
+    const typingIndicator = TypingIndicator();
+    late Widget sendChatWidget = BounceSpeechBubble(
+      text: keyword,
+      isAnswer: false,
+    );
 
-    if (_controller.text.isNotEmpty && !isAnswering) {
-      _makeChatWidget(_controller.text);
-      _controller.clear();
-    }
+    ref.read(chatWidgetListProvider.notifier).add(sendChatWidget);
+    ref.read(chatWidgetListProvider.notifier).add(typingIndicator);
+
+    //TODO api 연결 함수 추가
+    const result = '';
+    late Widget answerChatWidget = const BounceSpeechBubble(
+      text: result,
+      isAnswer: true,
+    );
+
+    ref.read(chatWidgetListProvider.notifier).remove(typingIndicator);
+    ref.read(chatWidgetListProvider.notifier).add(answerChatWidget);
   }
 
   @override
   Widget build(BuildContext context) {
+    final chatWidgetList = ref.watch(chatWidgetListProvider);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Bill Search Chat')),
+      appBar: AppBar(
+        title: const Text('Bill Search Chat'),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -81,91 +89,4 @@ class _ChatPageState extends ConsumerState<ChatPage>
       ),
     );
   }
-}
-
-class BounceWidget extends StatefulWidget {
-  final Widget child;
-  const BounceWidget({super.key, required this.child});
-
-  @override
-  State<BounceWidget> createState() => _BounceWidgetState();
-}
-
-class _BounceWidgetState extends State<BounceWidget>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
-    _animation = Tween<double>(begin: 0, end: 20)
-        .chain(CurveTween(curve: Curves.bounceOut))
-        .animate(_animationController);
-    _animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(0, _animation.value),
-          child: child,
-        );
-      },
-      child: widget.child,
-    );
-  }
-}
-
-Widget sendChatWidget(String text) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        padding: const EdgeInsets.all(12.0),
-        decoration: BoxDecoration(
-          color: Colors.blue,
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
-    ),
-  );
-}
-
-Widget responseChatWidget(String text) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        padding: const EdgeInsets.all(12.0),
-        decoration: BoxDecoration(
-          color: Colors.grey,
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
-    ),
-  );
 }
