@@ -1,23 +1,22 @@
 import 'package:bill_search_chat/components/animation/typing_indicator.dart';
+import 'package:bill_search_chat/page/chat/state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ChatPage extends StatefulWidget {
+class ChatPage extends ConsumerStatefulWidget {
   const ChatPage({super.key});
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  ConsumerState<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage>
+class _ChatPageState extends ConsumerState<ChatPage>
     with SingleTickerProviderStateMixin {
   final List<Widget> chatWidgetList = [];
   final TextEditingController _controller = TextEditingController();
 
-  // api 응답을 받는 중인지 여부
-  bool isAnswering = false;
-
   void _makeChatWidget(String submitValue) {
-    isAnswering = true;
+    ref.read(isAnsweringProvider.notifier).state = true;
     setState(() {
       chatWidgetList.add(
         BounceWidget(child: sendChatWidget(submitValue)),
@@ -32,11 +31,13 @@ class _ChatPageState extends State<ChatPage>
           BounceWidget(child: responseChatWidget(submitValue)),
         );
       });
-      isAnswering = false;
+      ref.read(isAnsweringProvider.notifier).state = false;
     });
   }
 
   void _onEditingComplete() {
+    final bool isAnswering = ref.read(isAnsweringProvider);
+
     if (_controller.text.isNotEmpty && !isAnswering) {
       _makeChatWidget(_controller.text);
       _controller.clear();
