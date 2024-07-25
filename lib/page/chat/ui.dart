@@ -1,4 +1,4 @@
-import 'package:bill_search_chat/components/animation/typing_indicator.dart';
+import 'package:bill_search_chat/components/chat/answer_chat_widget.dart';
 import 'package:bill_search_chat/components/chat/bounce_speech_bubble.dart';
 import 'package:bill_search_chat/page/chat/state.dart';
 import 'package:flutter/material.dart';
@@ -16,41 +16,27 @@ class _ChatPageState extends ConsumerState<ChatPage>
   final TextEditingController _controller = TextEditingController();
 
   void _onEditingComplete() {
-    final isAnswering = ref.read(isAnsweringProvider);
-    final keyword = _controller.text;
-
-    if (keyword.isNotEmpty && !isAnswering) return;
-
-    ref.read(isAnsweringProvider.notifier).state = true;
+    ref.read(keywordProvider.notifier).state = _controller.text;
+    _addChatWidget(_controller.text);
     _controller.clear();
-    _addChatWidget(keyword);
-    ref.read(isAnsweringProvider.notifier).state = false;
   }
 
   void _addChatWidget(String keyword) {
-    const typingIndicator = TypingIndicator();
-    late Widget sendChatWidget = BounceSpeechBubble(
+    Widget sendChatWidget = BounceSpeechBubble(
       text: keyword,
       isAnswer: false,
     );
+    Widget answerChatWidget = AnswerChatWidget(keyword: keyword);
 
     ref.read(chatWidgetListProvider.notifier).add(sendChatWidget);
-    ref.read(chatWidgetListProvider.notifier).add(typingIndicator);
-
-    //TODO api 연결 함수 추가
-    const result = '';
-    late Widget answerChatWidget = const BounceSpeechBubble(
-      text: result,
-      isAnswer: true,
-    );
-
-    ref.read(chatWidgetListProvider.notifier).remove(typingIndicator);
     ref.read(chatWidgetListProvider.notifier).add(answerChatWidget);
   }
 
   @override
   Widget build(BuildContext context) {
     final chatWidgetList = ref.watch(chatWidgetListProvider);
+    final keyword = ref.watch(keywordProvider);
+    final isLoading = ref.watch(getAnswerProvider(keyword)).isLoading;
 
     return Scaffold(
       appBar: AppBar(
@@ -75,12 +61,20 @@ class _ChatPageState extends ConsumerState<ChatPage>
                     controller: _controller,
                     decoration: const InputDecoration(
                         labelText: 'Enter a search keyword'),
-                    onEditingComplete: () => _onEditingComplete(),
+                    onEditingComplete: () {
+                      if (_controller.text.isNotEmpty && !isLoading) {
+                        _onEditingComplete();
+                      }
+                    },
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.send),
-                  onPressed: () => _onEditingComplete(),
+                  onPressed: () {
+                    if (_controller.text.isNotEmpty && !isLoading) {
+                      _onEditingComplete();
+                    }
+                  },
                 ),
               ],
             ),

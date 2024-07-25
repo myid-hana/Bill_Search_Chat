@@ -6,7 +6,7 @@ part of 'state.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$chatWidgetListHash() => r'36fb5181570f46fd67189141cc1464f0bb1a1f7c';
+String _$chatWidgetListHash() => r'9c60e0e83c022ea25e248d885ef3da8e7af772b7';
 
 /// See also [ChatWidgetList].
 @ProviderFor(ChatWidgetList)
