@@ -13,12 +13,13 @@ class ChatPage extends ConsumerStatefulWidget {
 
 class _ChatPageState extends ConsumerState<ChatPage>
     with SingleTickerProviderStateMixin {
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   void _onEditingComplete() {
-    ref.read(keywordProvider.notifier).state = _controller.text;
-    _addChatWidget(_controller.text);
-    _controller.clear();
+    ref.read(keywordProvider.notifier).state = _textController.text;
+    _addChatWidget(_textController.text);
+    _textController.clear();
   }
 
   void _addChatWidget(String keyword) {
@@ -46,6 +47,7 @@ class _ChatPageState extends ConsumerState<ChatPage>
         children: [
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               itemCount: chatWidgetList.length,
               itemBuilder: (context, index) {
                 return chatWidgetList[index];
@@ -58,11 +60,11 @@ class _ChatPageState extends ConsumerState<ChatPage>
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _controller,
+                    controller: _textController,
                     decoration: const InputDecoration(
                         labelText: 'Enter a search keyword'),
                     onEditingComplete: () {
-                      if (_controller.text.isNotEmpty && !isLoading) {
+                      if (_textController.text.isNotEmpty && !isLoading) {
                         _onEditingComplete();
                       }
                     },
@@ -71,7 +73,7 @@ class _ChatPageState extends ConsumerState<ChatPage>
                 IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: () {
-                    if (_controller.text.isNotEmpty && !isLoading) {
+                    if (_textController.text.isNotEmpty && !isLoading) {
                       _onEditingComplete();
                     }
                   },
