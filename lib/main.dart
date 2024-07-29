@@ -1,10 +1,13 @@
-import 'package:bill_search_chat/page/chat.dart';
+import 'package:bill_search_chat/page/chat/ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
+  GoogleFonts.config.allowRuntimeFetching = true;
+
   runApp(
-    const MyApp(),
+    const ProviderScope(child: MyApp()),
   );
 }
 
@@ -18,10 +21,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
+          seedColor: Colors.blueGrey,
         ),
         textTheme: GoogleFonts.notoSansKrTextTheme(),
       ),
+      debugShowCheckedModeBanner: false,
       home: const ChatPage(),
     );
   }
