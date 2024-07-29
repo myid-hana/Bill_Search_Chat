@@ -33,6 +33,15 @@ class _ChatPageState extends ConsumerState<ChatPage>
     ref.read(chatWidgetListProvider.notifier).add(answerChatWidget);
   }
 
+  void _scrollToBottom() {
+    final pageBottom = _scrollController.position.maxScrollExtent;
+    _scrollController.animateTo(
+      pageBottom,
+      curve: Curves.linear,
+      duration: const Duration(milliseconds: 500),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final chatWidgetList = ref.watch(chatWidgetListProvider);
@@ -64,6 +73,7 @@ class _ChatPageState extends ConsumerState<ChatPage>
                     decoration: const InputDecoration(
                         labelText: 'Enter a search keyword'),
                     onEditingComplete: () {
+                      _scrollToBottom();
                       if (_textController.text.isNotEmpty && !isLoading) {
                         _onEditingComplete();
                       }
@@ -73,6 +83,7 @@ class _ChatPageState extends ConsumerState<ChatPage>
                 IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: () {
+                    _scrollToBottom();
                     if (_textController.text.isNotEmpty && !isLoading) {
                       _onEditingComplete();
                     }
