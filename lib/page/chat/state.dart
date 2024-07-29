@@ -8,7 +8,7 @@ part 'state.g.dart';
 final keywordProvider = StateProvider<String>((ref) => "");
 
 final getAnswerProvider =
-    FutureProvider.autoDispose.family<String, String>((ref, keyword) async {
+    FutureProvider.family<String, String>((ref, keyword) async {
   final service = ChatService();
   return await service.getAnswer(keyword);
 });
