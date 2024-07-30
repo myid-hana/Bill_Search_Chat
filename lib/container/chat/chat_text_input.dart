@@ -1,4 +1,4 @@
-import 'package:bill_search_chat/components/chat/answer_chat_widget.dart';
+import 'package:bill_search_chat/container/chat/answer_chat_widget.dart';
 import 'package:bill_search_chat/components/chat/bounce_speech_bubble.dart';
 import 'package:bill_search_chat/page/chat/state.dart';
 import 'package:flutter/material.dart';

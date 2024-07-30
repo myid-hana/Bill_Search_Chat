@@ -1,4 +1,4 @@
-import 'package:bill_search_chat/components/chat/chat_text_input.dart';
+import 'package:bill_search_chat/container/chat/chat_text_input.dart';
 import 'package:bill_search_chat/page/chat/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
