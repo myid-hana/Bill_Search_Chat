@@ -1,5 +1,4 @@
-import 'package:bill_search_chat/components/chat/answer_chat_widget.dart';
-import 'package:bill_search_chat/components/chat/bounce_speech_bubble.dart';
+import 'package:bill_search_chat/components/chat/chat_text_input.dart';
 import 'package:bill_search_chat/page/chat/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,42 +10,28 @@ class ChatPage extends ConsumerStatefulWidget {
   ConsumerState<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends ConsumerState<ChatPage>
-    with SingleTickerProviderStateMixin {
-  final TextEditingController _textController = TextEditingController();
+class _ChatPageState extends ConsumerState<ChatPage> {
   final ScrollController _scrollController = ScrollController();
 
-  void _onEditingComplete() {
-    ref.read(keywordProvider.notifier).state = _textController.text;
-    _addChatWidget(_textController.text);
-    _textController.clear();
-  }
-
-  void _addChatWidget(String keyword) {
-    Widget sendChatWidget = BounceSpeechBubble(
-      text: keyword,
-      isAnswer: false,
-    );
-    Widget answerChatWidget = AnswerChatWidget(keyword: keyword);
-
-    ref.read(chatWidgetListProvider.notifier).add(sendChatWidget);
-    ref.read(chatWidgetListProvider.notifier).add(answerChatWidget);
-  }
-
   void _scrollToBottom() {
-    final pageBottom = _scrollController.position.maxScrollExtent;
-    _scrollController.animateTo(
-      pageBottom,
-      curve: Curves.linear,
-      duration: const Duration(milliseconds: 500),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final pageBottom = _scrollController.position.maxScrollExtent;
+      _scrollController.animateTo(
+        pageBottom,
+        curve: Curves.linear,
+        duration: const Duration(milliseconds: 300),
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final chatWidgetList = ref.watch(chatWidgetListProvider);
-    final keyword = ref.watch(keywordProvider);
-    final isLoading = ref.watch(getAnswerProvider(keyword)).isLoading;
+    ref.listen(chatWidgetListProvider, (oldState, newState) {
+      if (oldState != newState) {
+        _scrollToBottom();
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -56,6 +41,7 @@ class _ChatPageState extends ConsumerState<ChatPage>
         children: [
           Expanded(
             child: ListView.builder(
+              reverse: true,
               controller: _scrollController,
               itemCount: chatWidgetList.length,
               itemBuilder: (context, index) {
@@ -63,35 +49,7 @@ class _ChatPageState extends ConsumerState<ChatPage>
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _textController,
-                    decoration: const InputDecoration(
-                        labelText: 'Enter a search keyword'),
-                    onEditingComplete: () {
-                      _scrollToBottom();
-                      if (_textController.text.isNotEmpty && !isLoading) {
-                        _onEditingComplete();
-                      }
-                    },
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: () {
-                    _scrollToBottom();
-                    if (_textController.text.isNotEmpty && !isLoading) {
-                      _onEditingComplete();
-                    }
-                  },
-                ),
-              ],
-            ),
-          ),
+          const ChatTextInput(),
         ],
       ),
     );
