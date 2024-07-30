@@ -21,7 +21,6 @@ class ChatWidgetList extends _$ChatWidgetList {
   }
 
   void add(Widget widget) {
-    state.add(widget);
-    ref.notifyListeners();
+    state = [...state, widget];
   }
 }
